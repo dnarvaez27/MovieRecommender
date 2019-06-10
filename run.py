@@ -21,9 +21,12 @@ def home():
 
 @app.route('/movies', methods=['GET'])
 def get_movies():
+    start = request.args.get('start') or 0
+    end = request.args.get('end') or 100
+
     df = rec.get_movies()
     res = list(zip(df['title'], df['genres'], df['imdbId']))
-    return list_to_response(res)
+    return list_to_response(res[start:end])
 
 
 @app.route('/rec', methods=['GET'])
