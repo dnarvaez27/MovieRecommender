@@ -1,0 +1,43 @@
+#modal-bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  top: 0;
+  left: 0;
+}
+
+#modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+#modal > #modal-header {
+  position: relative;
+}
+
+#modal > #modal-header > button {
+  position: absolute;
+  right: 0;
+  background-color: firebrick;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  padding: 5px 10px 3px 10px;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  transform: translate(100%, -100%);
+  cursor: pointer;
+  outline: none;
+}
+
+#modal > #modal-header > button:hover {
+  background-color: white;
+  color: firebrick;
+  border: 2px solid firebrick;
+}
