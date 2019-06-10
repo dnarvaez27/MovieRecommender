@@ -1,6 +1,7 @@
 from flask import Flask, request, Response
 from flask_cors import CORS
 from movie_recommender import MovieRecommender
+import requests
 import os
 import json
 
@@ -10,7 +11,7 @@ CORS(app, origins=["http://localhost:3000", "https://dnarvaez27.github.io/MovieR
 rec = MovieRecommender()
 
 
-def list_to_response(li):
+def to_response(li):
     return Response(json.dumps(li), content_type='application/json')
 
 
@@ -26,7 +27,7 @@ def get_movies():
 
     df = rec.get_movies()
     res = list(zip(df['title'], df['genres'], df['imdbId']))
-    return list_to_response(res[start:end])
+    return to_response(res[start:end])
 
 
 @app.route('/rec', methods=['GET'])
@@ -34,11 +35,20 @@ def recommend_by_movie():
     movie = request.args.get('movie')
     if movie:
         try:
-            return list_to_response(rec.get_similar(movie))
+            return to_response(rec.get_similar(movie))
         except Exception as e:
             return 'No movie found'
     else:
         return 'Select a movie'
+
+
+@app.route('/movieimg', methods=['GET'])
+def get_img():
+    API_KEY = os.environ.get('OMDbAPI_KEY', None)
+    IMDbID = request.args.get('IMDbID')
+    url = 'http://www.omdbapi.com/?i=tt{}&apikey={}'.format(str(IMDbID).zfill(7), API_KEY)
+    req = requests.get(url)
+    return to_response({'img': req.json()['Poster']})
 
 
 @app.errorhandler(Exception)
