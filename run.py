@@ -36,9 +36,10 @@ def recommend_by_movie():
     movie = request.args.get('movie')
     if movie:
         try:
-            return to_response(rec.get_similar(movie))
+            temp = rec.get_similar(movie)
+            return to_response(list(zip(temp['title'], temp['genres'], temp['imdbId'], temp['correlation'] )))
         except Exception as e:
-            return 'No movie found'
+            return str(e)
     else:
         return 'Select a movie'
 
@@ -50,11 +51,6 @@ def get_img():
     url = 'http://www.omdbapi.com/?i=tt{}&apikey={}'.format(str(IMDbID).zfill(7), API_KEY)
     req = requests.get(url)
     return to_response({'img': req.json()['Poster']})
-
-
-@app.errorhandler(Exception)
-def handle_invalid_usage(error):
-    return Response(json.dumps(error), status_code=error.status_code)
 
 
 if __name__ == '__main__':

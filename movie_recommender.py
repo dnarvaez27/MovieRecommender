@@ -5,11 +5,13 @@ warnings.filterwarnings('ignore')
 
 class MovieRecommender:
     def __init__(self):
-        ratings = pandas.read_csv('./data/ratings.csv', sep=',', names=['userId', 'movieId', 'rating', 'timestamp'], header=0)
+        ratings = pandas.read_csv('./data/ratings.csv', sep=',',
+                                  names=['userId', 'movieId', 'rating', 'timestamp'], header=0)
         ratings.drop_duplicates(subset=['userId', 'movieId'], keep='first', inplace=True)
 
         movie_links = pandas.read_csv('./data/links.csv', sep=',', names=['movieId', 'imdbId', 'tmdbId'], header=0)
-        self.movie_titles = pandas.read_csv('./data/movies.csv', sep=',', names=['movieId', 'title', 'genres'], header=0)
+        self.movie_titles = pandas.read_csv('./data/movies.csv', sep=',',
+                                            names=['movieId', 'title', 'genres'], header=0)
         self.movie_titles = pandas.merge(self.movie_titles, movie_links, on='movieId')
 
         self.movie_titles.drop_duplicates(subset='title', keep='first', inplace=True)
@@ -36,4 +38,9 @@ class MovieRecommender:
                                                                         >= min_correlation)].sort_values(by='correlation', ascending=False)
         serie = res['correlation']
 
-        return list(zip(serie.index, serie))
+        try:
+            temp = pandas.DataFrame(zip(serie.index, serie), columns=['title', 'correlation'])
+            temp = pandas.merge(temp, self.movie_titles, on='title')
+            return temp
+        except Exception as e:
+            raise e
