@@ -22,7 +22,7 @@ def home():
 @app.route('/movies', methods=['GET'])
 def get_movies():
     df = rec.get_movies()
-    res = list(zip(df['title'], df['genres']))
+    res = list(zip(df['title'], df['genres'], df['imdbId']))
     return list_to_response(res)
 
 

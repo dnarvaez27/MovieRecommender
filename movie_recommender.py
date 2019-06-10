@@ -8,7 +8,10 @@ class MovieRecommender:
         ratings = pandas.read_csv('./data/ratings.csv', sep=',', names=['userId', 'movieId', 'rating', 'timestamp'], header=0)
         ratings.drop_duplicates(subset=['userId', 'movieId'], keep='first', inplace=True)
 
+        movie_links = pandas.read_csv('./data/links.csv', sep=',', names=['movieId', 'imdbId', 'tmdbId'], header=0)
         self.movie_titles = pandas.read_csv('./data/movies.csv', sep=',', names=['movieId', 'title', 'genres'], header=0)
+        self.movie_titles = pandas.merge(self.movie_titles, movie_links, on='movieId')
+
         self.movie_titles.drop_duplicates(subset='title', keep='first', inplace=True)
 
         ratings = pandas.merge(ratings, self.movie_titles, on='movieId')
@@ -29,7 +32,8 @@ class MovieRecommender:
         corr_movie.dropna(inplace=True)
         corr_movie = corr_movie.join(self.ratings['count_ratings'])
 
-        res = corr_movie[(corr_movie['count_ratings'] > min_ratings) & (corr_movie['correlation'] >= min_correlation)].sort_values(by='correlation', ascending=False)
+        res = corr_movie[(corr_movie['count_ratings'] > min_ratings) & (corr_movie['correlation']
+                                                                        >= min_correlation)].sort_values(by='correlation', ascending=False)
         serie = res['correlation']
 
         return list(zip(serie.index, serie))
