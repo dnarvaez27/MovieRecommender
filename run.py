@@ -6,7 +6,7 @@ import os
 import json
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:3000", "https://dnarvaez27.github.io/MovieRecommender"])
+CORS(app, origins=["http://localhost:3000", "https://dnarvaez27.github.io"])
 
 rec = MovieRecommender()
 
