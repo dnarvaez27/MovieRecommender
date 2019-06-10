@@ -13,9 +13,14 @@ def list_to_response(li):
 
 
 @app.route('/', methods=['GET'])
+def home():
+    return 'Movie Recommender'
+
+
+@app.route('/movies', methods=['GET'])
 def get_movies():
     df = rec.get_movies()
-    res = list(zip( df['title'], df['genres'] ))
+    res = list(zip(df['title'], df['genres']))
     return list_to_response(res)
 
 
@@ -26,6 +31,11 @@ def recommend_by_movie():
         return list_to_response(rec.get_similar(movie))
     else:
         return 'Select a movie'
+
+
+@app.errorhandler(Exception)
+def handle_invalid_usage(error):
+    return Response(json.dumps(error), status_code=error.status_code)
 
 
 if __name__ == '__main__':
