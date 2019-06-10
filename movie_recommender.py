@@ -5,15 +5,18 @@ warnings.filterwarnings('ignore')
 
 class MovieRecommender:
     def __init__(self):
-        df = pandas.read_csv('./data/ratings.csv', sep=',', names=['userId', 'movieId', 'rating', 'timestamp'], header=0)
+        ratings = pandas.read_csv('./data/ratings.csv', sep=',', names=['userId', 'movieId', 'rating', 'timestamp'], header=0)
+        ratings.drop_duplicates(subset=['userId', 'movieId'], keep='first', inplace=True)
+
         self.movie_titles = pandas.read_csv('./data/movies.csv', sep=',', names=['movieId', 'title', 'genres'], header=0)
+        self.movie_titles.drop_duplicates(subset='title', keep='first', inplace=True)
 
-        df = pandas.merge(df, self.movie_titles, on='movieId')
+        ratings = pandas.merge(ratings, self.movie_titles, on='movieId')
 
-        self.ratings = pandas.DataFrame(df.groupby('title')['rating'].mean())
-        self.ratings['count_ratings'] = df.groupby('title')['rating'].count()
+        self.ratings = pandas.DataFrame(ratings.groupby('title')['rating'].mean())
+        self.ratings['count_ratings'] = ratings.groupby('title')['rating'].count()
 
-        self.movie_matrix = df.pivot_table(index='userId', columns='title', values='rating')
+        self.movie_matrix = ratings.pivot_table(index='userId', columns='title', values='rating')
 
     def get_movies(self):
         return self.movie_titles

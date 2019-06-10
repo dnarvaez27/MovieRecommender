@@ -30,7 +30,10 @@ def get_movies():
 def recommend_by_movie():
     movie = request.args.get('movie')
     if movie:
-        return list_to_response(rec.get_similar(movie))
+        try:
+            return list_to_response(rec.get_similar(movie))
+        except Exception as e:
+            return 'No movie found'
     else:
         return 'Select a movie'
 
